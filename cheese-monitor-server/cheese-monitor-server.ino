@@ -11,6 +11,8 @@
 
 WiFiServer server(80);
 Application app;
+OneWire oneWire(TMP_PIN);
+DallasTemperature temp(&oneWire); // Thermometer
 
 void init_lamps()
 {
@@ -38,6 +40,8 @@ void toggle_lamp(int lamp) {
 }
 
 void setup() {
+  init_lamps();
+  temp.begin();
   Serial.begin(115200);
 
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
