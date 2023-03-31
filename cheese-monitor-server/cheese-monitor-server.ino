@@ -4,9 +4,38 @@
 
 #define WIFI_SSID "network"
 #define WIFI_PASSWORD "password"
+ 
+#define LAMP_0_PIN  18
+#define LAMP_1_PIN  19
+#define TMP_PIN     21
 
 WiFiServer server(80);
 Application app;
+
+void init_lamps()
+{
+  pinMode(LAMP_0_PIN, OUTPUT);
+  pinMode(LAMP_1_PIN, OUTPUT);
+}
+
+int get_lamp(int lamp) {
+  int pin = LAMP_0_PIN;
+  if (lamp == 1)
+    pin = LAMP_1_PIN;
+  return digitalRead(pin);
+}
+
+void set_lamp(int lamp, int val) {
+  int pin = LAMP_0_PIN;
+  if (lamp == 1)
+    pin = LAMP_1_PIN;
+  digitalWrite(pin, val);
+}
+
+void toggle_lamp(int lamp) {
+  int curr = get_lamp(lamp);
+  set_lamp(lamp, !curr);
+}
 
 void setup() {
   Serial.begin(115200);
