@@ -43,7 +43,7 @@
   "awot-static": {
     "sources": "./build",
     "indexFile": "index.html",
-    "sketchDir": "./chees-monitor-server",
+    "sketchDir": "./cheese-monitor-server",
     "exclude": [
       "*.map",
       "service-worker.js"
