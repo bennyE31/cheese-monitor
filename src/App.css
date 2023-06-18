@@ -9,13 +9,27 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    animation: App-logo-spin infinite 10s linear;
   }
 }
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.Logo {
+  background-color: inherit;
+  padding: 70px;
+}
+
+.App-body {
+  background-color: #282c34;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -35,4 +49,48 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.App-footer {
+  background-color: #282c34;
+  display: flex;
+  min-height: 100vh;
+}
+
+.TemperatureReading {
+  justify-content: center;
+  display: flex;
+  position: relative;
+}
+
+.LampButton {
+  justify-content: center;
+  display: flex;
+  position: relative;
+  border-radius: 25px;
+  background-color: #1a1e1e;
+  padding: 7px;
+  margin-top: 15px;
+  color: black;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.LampButton.Hot {
+  background-color: red;
+}
+
+.LampButton.Light {
+  background-color: orange;
+}
+
+.LampButton-button {
+  display: flex;
+}
+
+.LampButton-caption {
+  padding-left: 10px;
+}
+
+.TemperatureReading {
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }

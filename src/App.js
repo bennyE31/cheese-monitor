@@ -1,23 +1,27 @@
-import logo from './logo.svg';
+import queso_pic from './queso.png';
 import './App.css';
+import LampButton from './Components';
+import {TemperatureReading} from './Components';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <header className="Logo">
+          <img src={queso_pic} className="App-logo" alt="logo" />
+        </header>
       </header>
+      <div className="App-body">
+
+        <TemperatureReading />
+        <LampButton lamp={0} />
+        <LampButton lamp={1} />
+
+      </div>
+
+    < div className="App-footer">
+    </div>
+
     </div>
   );
 }

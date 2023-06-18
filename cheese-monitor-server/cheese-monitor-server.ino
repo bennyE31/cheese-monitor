@@ -31,14 +31,14 @@ int get_lamp(int lamp) {
   int pin = LAMP_0_PIN;
   if (lamp == 1)
     pin = LAMP_1_PIN;
-  return digitalRead(pin);
+  return !digitalRead(pin);
 }
 
 void set_lamp(int lamp, int val) {
   int pin = LAMP_0_PIN;
   if (lamp)
     pin = LAMP_1_PIN;
-  digitalWrite(pin, val);
+  digitalWrite(pin, !val);
 }
 
 void toggle_lamp(int lamp) {
@@ -60,23 +60,27 @@ void authorize_req(Request &req, Response &res) {
 
 // Request callbacks
 void get_lamp_req(Request &req, Response &res) {
-  if (deserializeJson(req_doc, req)) {
-    Serial.println("Failed to deserialize json\n");
+  char num[2];
+
+  req.route("num", num, 2);
+  int lamp = atoi(num);
+  if (lamp >= NUM_LAMPS || lamp < 0) {
+    res.sendStatus(400);
+    req_doc.clear();
+    return;
   }
-  
-  int lamp = req_doc["lamp"];
+
   Serial.print("Got request for lamp ");
   Serial.println(lamp);
 
   res_doc.clear();
   res_doc["lamp"] = lamp;
-  res_doc["value"] = get_lamp(lamp);
+  res_doc["val"] = get_lamp(lamp);
 
   res.set("Content-Type", "application/json");
-  res.beginHeaders();
-  res.endHeaders();
-  res.sendStatus(200);
   serializeJson(res_doc, res);
+  res.status(200);
+  res.end();
   req_doc.clear();
 }
 
@@ -99,13 +103,12 @@ void set_lamp_req(Request &req, Response &res) {
 
   res_doc.clear();
   res_doc["lamp"] = lamp;
-  res_doc["value"] = get_lamp(lamp);
+  res_doc["val"] = get_lamp(lamp);
 
   res.set("Content-Type", "application/json");
-  res.beginHeaders();
-  res.endHeaders();
-  res.sendStatus(200);
   serializeJson(res_doc, res);
+  res.status(200);
+  res.end();
   req_doc.clear();
 }
 
@@ -118,10 +121,9 @@ void get_temp_req(Request &req, Response &res) {
   res_doc["temp"] = temp.getTempFByIndex(0);
 
   res.set("Content-Type", "application/json");
-  res.beginHeaders();
-  res.endHeaders();
-  res.sendStatus(200);
   serializeJson(res_doc, res);
+  res.status(200);
+  res.end();
   req_doc.clear();
 }
 
@@ -140,9 +142,9 @@ void setup() {
   app.header("Authorization", authorization, 100);
 
   app.use(&authorize_req);
-  app.get("/lamp", &get_lamp_req);
+  app.get("/lamp/:num", &get_lamp_req);
   app.put("/lamp", &set_lamp_req);
-  app.put("/temp", &get_temp_req);
+  app.get("/temp", &get_temp_req);
   app.use(staticFiles());
 
   server.begin();
