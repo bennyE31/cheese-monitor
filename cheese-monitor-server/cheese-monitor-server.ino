@@ -1,4 +1,5 @@
 #include <WiFi.h>
+#include <WifiClient.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <ArduinoJson.h>
@@ -10,6 +11,9 @@
 #define LAMP_0_PIN  25
 #define LAMP_1_PIN  33
 #define TMP_PIN     32
+#define HEAT_LAMP   0
+#define TMP_LOW     68
+#define TMP_HIGH    82
 
 WiFiServer server(80);
 Application app;
@@ -126,6 +130,45 @@ void get_temp_req(Request &req, Response &res) {
   res.end();
   req_doc.clear();
 }
+void GetExternalIP()
+{
+  WiFiClient client;
+  if (!client.connect("api.ipify.org", 80)) {
+    Serial.println("Failed to connect with 'api.ipify.org' !");
+  }
+  else {
+    int timeout = millis() + 5000;
+    client.print("GET /?format=json HTTP/1.1\r\nHost: api.ipify.org\r\n\r\n");
+    while (client.available() == 0) {
+      if (timeout - millis() < 0) {
+        Serial.println(">>> Client Timeout !");
+        client.stop();
+        return;
+      }
+    }
+    int size;
+    while ((size = client.available()) > 0) {
+      uint8_t* msg = (uint8_t*)malloc(size);
+      size = client.read(msg, size);
+      Serial.write(msg, size);
+      free(msg);
+    }
+  }
+}
+
+void check_heat() {
+  temp.requestTemperatures();
+  float t = temp.getTempFByIndex(0);
+
+  if (t > TMP_HIGH && !get_lamp(HEAT_LAMP)) {
+    toggle_lamp(HEAT_LAMP);
+  }
+
+  else if (t < TMP_LOW && get_lamp(HEAT_LAMP)) {
+    toggle_lamp(HEAT_LAMP);
+  }
+
+}
 
 void setup() {
   init_lamps();
@@ -138,6 +181,7 @@ void setup() {
     Serial.print(".");
   }
   Serial.println(WiFi.localIP());
+  GetExternalIP();
 
   app.header("Authorization", authorization, 100);
 
@@ -151,6 +195,7 @@ void setup() {
 }
 
 void loop() {
+  check_heat();
   WiFiClient client = server.available();
 
   if (client.connected()) {

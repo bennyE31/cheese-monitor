@@ -48,7 +48,7 @@ class LampButton extends Component {
           
           <div className="LampButton-button">
             <ToggleButton 
-            value={ this.state.val }
+            value={ !this.state.val }
             onToggle={ value => this.toggleLamp(value) }
             />
           </div>
