@@ -3,6 +3,9 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <ArduinoJson.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+#include <TimerEvent.h>
 #include "aWOT.h"
 #include "StaticFiles.h"
 #include "credentials.h"
@@ -15,7 +18,13 @@
 #define TMP_LOW     68
 #define TMP_HIGH    82
 
+#define TIME_OFFSET -5
+#define TIME_UPDATE_INTERVAL 60000
+
 WiFiServer server(80);
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", TIME_OFFSET);
+TimerEvent clockTimer;
 Application app;
 OneWire oneWire(TMP_PIN);
 DallasTemperature temp(&oneWire); // Thermometer
@@ -170,6 +179,31 @@ void check_heat() {
 
 }
 
+void get_time() {
+  timeClient.update();
+  
+  int hours = timeClient.getHours();
+  int minutes = timeClient.getMinutes();
+
+  Serial.print("Time is: ");
+  Serial.print(hours);
+  Serial.print(":");
+  Serial.print(minutes);
+  Serial.println();
+
+  if (hours == 20 && minutes <= 2) {
+    set_lamp(1, 0);
+  }
+  else if (hours == 9 && minutes <= 2) {
+    set_lamp(1, 1);
+  }
+}
+
+void ntp_init() {
+  timeClient.begin();
+  clockTimer.set(TIME_UPDATE_INTERVAL, get_time);
+}
+
 void setup() {
   init_lamps();
   temp.begin();
@@ -181,7 +215,8 @@ void setup() {
     Serial.print(".");
   }
   Serial.println(WiFi.localIP());
-  GetExternalIP();
+  // GetExternalIP();
+  // Serial.println();
 
   app.header("Authorization", authorization, 100);
 
@@ -192,10 +227,12 @@ void setup() {
   app.use(staticFiles());
 
   server.begin();
+  ntp_init();
 }
 
 void loop() {
   check_heat();
+  clockTimer.update();
   WiFiClient client = server.available();
 
   if (client.connected()) {
