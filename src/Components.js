@@ -1,6 +1,7 @@
 
 import { Component } from 'react';
 import ToggleButton from 'react-toggle-button';
+import api from './api';
 
 class LampButton extends Component {
     constructor(props) {
@@ -16,29 +17,11 @@ class LampButton extends Component {
     }
   
     tick() {
-      const request = {
-        method: "GET",
-        headers: { "Content-Type": "application/json"}
-      };
-      const request_url = "/lamp/" + this.state.lamp;
-      fetch(request_url, request)
-        .then(r => r.json())
-        .then(j => {
-          this.setState({val:j.val===1});
-        });
+      this.setState({val:api.getLamp(this.state.lamp)});
     }
 
     toggleLamp() {
-      
-      const request = {
-        method: "PUT",
-        headers: { "Content-Type": "application/json"}
-      };
-      fetch(`/lamp/${this.state.lamp}/toggle`, request)
-        .then(r => r.json())
-        .then(j => {
-          this.setState({val:j.val===1});
-        });;
+      this.setState({val:api.toggleLamp(this.state.lamp)});
     }
   
     render() {
@@ -79,18 +62,7 @@ class TemperatureReading extends Component {
     }
 
     updateTemp() {
-        const request = {
-            method: "GET",
-            headers: { "Content-Type": "application/json"}
-        };
-        const request_url = "/temp";
-        console.log("fetching from",request_url);
-        fetch(request_url, request)
-            .then(r => r.json())
-            .then(j => {
-            console.log("Temp json:", j)
-            this.setState({temp:j.temp.toFixed(2)});
-            });
+      this.setState({temp:api.getTemp()});
     }
     
     getColor(temp){
