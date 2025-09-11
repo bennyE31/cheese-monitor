@@ -32,10 +32,9 @@ class LampButton extends Component {
       
       const request = {
         method: "PUT",
-        headers: { "Content-Type": "application/json"},
-        body: JSON.stringify({ lamp: this.state.lamp })
+        headers: { "Content-Type": "application/json"}
       };
-      fetch("/lamp", request)
+      fetch(`/lamp/${this.state.lamp}/toggle`, request)
         .then(r => r.json())
         .then(j => {
           this.setState({val:j.val===1});
