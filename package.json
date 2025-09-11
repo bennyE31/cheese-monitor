@@ -16,8 +16,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build && python3 configure.py",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "dist": "awot-static"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -35,19 +34,6 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "awot-scripts": "^3.1.2"
-  },
-  "proxy": "http://arduino.ip",
-  "awot-static": {
-    "sources": "./build",
-    "indexFile": "index.html",
-    "sketchDir": "./cheese-monitor-server",
-    "exclude": [
-      "*.map",
-      "service-worker.js"
     ]
   }
 }
