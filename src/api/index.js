@@ -7,7 +7,6 @@ function apiFetch(endpoint, request) {
 export function getLamp(lamp) {
     const request = {
     method: "GET",
-    mode: "no-cors",
     headers: { "Content-Type": "application/json"}
     };
     const request_url = "/lamp/" + lamp;
@@ -25,7 +24,6 @@ export function getLamp(lamp) {
 export function toggleLamp(lamp) {
     const request = {
     method: "PUT",
-    mode: "no-cors",
     headers: { "Content-Type": "application/json"}
     };
     apiFetch(`/lamp/${lamp}/toggle`, request)
@@ -39,7 +37,6 @@ export function toggleLamp(lamp) {
 export function setLamp(lamp, val) {
     const request = {
     method: "PUT",
-    mode: "no-cors",
     headers: { "Content-Type": "application/json"}
     };
     apiFetch(`/lamp/${lamp}/set/${val ? 1 : 0}`, request)
@@ -53,7 +50,6 @@ export function setLamp(lamp, val) {
 export function getTemp() {
     const request = {
         method: "GET",
-        mode: "no-cors",
         headers: { "Content-Type": "application/json"}
     };
     const request_url = "/temp";
