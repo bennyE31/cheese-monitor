@@ -1,65 +1,90 @@
 const API_HOST = process.env.REACT_APP_API_HOST || "http://localhost:3001"
 
-function apiFetch(endpoint, request) {
-    return fetch(`${API_HOST}${endpoint}`, request);
+let authHeader = null;
+
+export function setAuth(username, password) {
+  authHeader = "Basic " + btoa(username + ":" + password);
 }
 
-export function getLamp(lamp) {
+async function apiFetch(endpoint, request) {
+    if (!authHeader) throw new Error("Not authenticated");
+    request.headers["Authorization"] = authHeader;
+    return await fetch(`${API_HOST}${endpoint}`, request);
+}
+
+export async function getLamp(lamp) {
+    console.log("GET LAMP!!!!")
     const request = {
     method: "GET",
     headers: { "Content-Type": "application/json"}
     };
     const request_url = "/lamp/" + lamp;
 
-    
-    apiFetch(request_url, request)
-    .then(r => r.json())
-    .then(j => {
-        return j.val===1;
-    });
+    try {
+        const res = await apiFetch(request_url, request);
+        console.log(res);
+        const j = await res.json();
+        console.log(j);
 
-    return null;
+        return j.val === 1;
+    } catch {
+        console.error("failed to get lamp " + lamp)
+        return null
+    }
 }
 
-export function toggleLamp(lamp) {
+export async function toggleLamp(lamp) {
     const request = {
     method: "PUT",
     headers: { "Content-Type": "application/json"}
     };
-    apiFetch(`/lamp/${lamp}/toggle`, request)
-    .then(r => r.json())
-    .then(j => {
+    try {
+        const res = await apiFetch(`/lamp/${lamp}/toggle`, request);
+        console.log(res);
+        const j = await res.json();
+        console.log(j);
+
         return j.val===1;
-    });
-    return null;
+    } catch {
+        console.error("failed to toggle lamp " + lamp)
+        return null
+    }
 }
 
-export function setLamp(lamp, val) {
+export async function setLamp(lamp, val) {
     const request = {
     method: "PUT",
     headers: { "Content-Type": "application/json"}
     };
-    apiFetch(`/lamp/${lamp}/set/${val ? 1 : 0}`, request)
-    .then(r => r.json())
-    .then(j => {
-        return j.val===1;
-    });
-    return null;
+    try {
+        const res = await apiFetch(`/lamp/${lamp}/set/${val ? 1 : 0}`, request);
+        console.log(res);
+        const j = await res.json();
+        console.log(j);
+
+        return j.val === 1;
+    } catch {
+        console.error("failed to set lamp " + lamp)
+        return null
+    }
 }
 
-export function getTemp() {
+export async function getTemp() {
     const request = {
         method: "GET",
         headers: { "Content-Type": "application/json"}
     };
     const request_url = "/temp";
     console.log("fetching from",request_url);
-    fetch(request_url, request)
-        .then(r => r.json())
-        .then(j => {
-            return j.temp.toFixed(2);
-        });
-    return null;
+    try {
+        const res = await apiFetch(request_url, request)
+        console.log(res);
+        const j = await res.json();
+        console.log(j);
+        return j.temp.toFixed(2);
+    } catch {
+        return null
+    }
 }
 
 const api = {

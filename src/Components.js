@@ -16,12 +16,12 @@ class LampButton extends Component {
       );
     }
   
-    tick() {
-      this.setState({val:api.getLamp(this.state.lamp)});
+    async tick() {
+      this.setState({val:await api.getLamp(this.state.lamp)});
     }
 
-    toggleLamp() {
-      this.setState({val:api.toggleLamp(this.state.lamp)});
+    async toggleLamp() {
+      this.setState({val:await api.toggleLamp(this.state.lamp)});
     }
   
     render() {
@@ -61,8 +61,8 @@ class TemperatureReading extends Component {
         this.updateTemp()
     }
 
-    updateTemp() {
-      this.setState({temp:api.getTemp()});
+    async updateTemp() {
+      this.setState({temp: await api.getTemp()});
     }
     
     getColor(temp){
